@@ -21,24 +21,20 @@ public class StudentDAO {
 		Student student = null;
 
 		try {
-			// make connection to mysql
+
 			conn = DBUtil.makeConnection();
 
 			System.out.println("conn " + conn);
 			String sql = "SELECT * FROM student WHERE email = ? AND password = ?";
 
-			// ps contains sql and parameter values
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, email);
 			ps.setString(2, password);
 			System.out.println("ps:" + ps);
-			// rs receives results from mysql
+
 			rs = ps.executeQuery();
-			System.out.println("rs:" + rs);
-			// rs -> record or many records
-			// rs.next will return boolean if data exists for the first results we will get
-			// them and put into Student entity
-			if (rs.next()) { // rs.next is boolean 1/0
+
+			if (rs.next()) {
 				long id = rs.getLong("id");
 				String firstName = rs.getString("first_name");
 				String lastName = rs.getString("last_name");
@@ -55,7 +51,7 @@ public class StudentDAO {
 
 			e.printStackTrace();
 
-		} finally { // must be closed after all queries finish to prevent overwhelming server
+		} finally {
 			if (rs != null) {
 				rs.close();
 			}
@@ -70,6 +66,118 @@ public class StudentDAO {
 
 		return null;
 
+	}
+
+	public boolean updateStudentDetailsById(int studentId, String firstName, String lastName) throws SQLException {
+
+		Connection conn = null;
+		PreparedStatement ps = null;
+
+		try {
+			conn = DBUtil.makeConnection();
+			String sql = "UPDATE student SET first_name = ?, last_name = ? where id = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, firstName);
+			ps.setString(2, lastName);
+			ps.setLong(3, studentId);
+
+			int rs = ps.executeUpdate();
+
+			if (rs == 1) {
+				return true;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+		}
+
+		return false;
+	}
+
+	public boolean setStudentPasswordToDefault(int studentId) throws SQLException {
+
+		Connection conn = null;
+		PreparedStatement ps = null;
+		PreparedStatement pstm = null;
+		ResultSet rs = null;
+
+		try {
+			conn = DBUtil.makeConnection();
+			String sql = "SELECT * FROM student WHERE id = ?";
+
+			ps = conn.prepareStatement(sql);
+			ps.setLong(1, studentId);
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				long id = rs.getLong("id");
+				String salt = rs.getString("salt");
+				String defaultPassword = Constant.DEFAULT_STUDENT_PASSWORD;
+				String password = SecureHash.getPBKDF2Password(defaultPassword, salt);
+
+				sql = "UPDATE student SET password = ? where id = ?";
+				pstm = conn.prepareStatement(sql);
+				pstm.setString(1, password);
+				pstm.setLong(2, id);
+
+				pstm.executeUpdate();
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (ps != null) {
+				ps.close();
+			}
+			if (pstm != null) {
+				pstm.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+		}
+
+		return false;
+	}
+
+	public boolean deleteStudentById(int studentId) throws SQLException {
+		Connection conn = null;
+		PreparedStatement ps = null;
+
+		try {
+			conn = DBUtil.makeConnection();
+			String sql = "DELETE FROM student WHERE id = ?";
+
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, studentId);
+			int rs = ps.executeUpdate();
+
+			if (rs == 1) {
+				return true;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+		}
+
+		return false;
 	}
 
 	public Student getStudentByEmailAndPassword(String email, String password) throws SQLException {
@@ -87,7 +195,7 @@ public class StudentDAO {
 			ps.setString(1, email);
 			rs = ps.executeQuery();
 
-			if (rs.next()) { // rs.next is boolean 1/0
+			if (rs.next()) {
 				long id = rs.getLong("id");
 				String firstName = rs.getString("first_name");
 				String lastName = rs.getString("last_name");
@@ -126,7 +234,6 @@ public class StudentDAO {
 		PreparedStatement ps = null;
 		PreparedStatement pstm = null;
 		ResultSet rs = null;
-		Student student = null;
 
 		try {
 			conn = DBUtil.makeConnection();
@@ -136,7 +243,7 @@ public class StudentDAO {
 			ps.setString(1, email);
 			rs = ps.executeQuery();
 
-			if (rs.next()) { // rs.next is boolean 1/0
+			if (rs.next()) {
 				long id = rs.getLong("id");
 				String storedPassword = rs.getString("password");
 				String salt = rs.getString("salt");
@@ -147,7 +254,7 @@ public class StudentDAO {
 
 					String password = SecureHash.getPBKDF2Password(newPassword, salt);
 
-					sql = "UPDATE student SET password = ? where (id = ?)";
+					sql = "UPDATE student SET password = ? where id = ?";
 					pstm = conn.prepareStatement(sql);
 					pstm.setString(1, password);
 					pstm.setLong(2, id);
@@ -236,7 +343,7 @@ public class StudentDAO {
 			ps = conn.prepareStatement(sql);
 			rs = ps.executeQuery();
 
-			while (rs.next()) { // rs.next is boolean 1/0
+			while (rs.next()) {
 				long id = rs.getLong("id");
 				String firstName = rs.getString("first_name");
 				String lastName = rs.getString("last_name");
@@ -249,7 +356,7 @@ public class StudentDAO {
 			return studentList;
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally { // must be closed after all queries finish to prevent overwhelming server
+		} finally {
 			if (rs != null) {
 				rs.close();
 			}
