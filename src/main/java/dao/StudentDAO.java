@@ -68,18 +68,20 @@ public class StudentDAO {
 
 	}
 
-	public boolean updateStudentDetailsById(int studentId, String firstName, String lastName) throws SQLException {
+	public boolean updateStudentDetailsById(int studentId, String firstName, String lastName, String email)
+			throws SQLException {
 
 		Connection conn = null;
 		PreparedStatement ps = null;
 
 		try {
 			conn = DBUtil.makeConnection();
-			String sql = "UPDATE student SET first_name = ?, last_name = ? where id = ?";
+			String sql = "UPDATE student SET first_name = ?, last_name = ?, email = ? WHERE id = ?";
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, firstName);
 			ps.setString(2, lastName);
-			ps.setLong(3, studentId);
+			ps.setString(3, email);
+			ps.setLong(4, studentId);
 
 			int rs = ps.executeUpdate();
 
@@ -291,7 +293,7 @@ public class StudentDAO {
 
 		try {
 			conn = DBUtil.makeConnection();
-			String sql = "INSERT IGNORE INTO student (first_name, last_name, email, password, salt) VALUES (?,?,?, ?, ?)";
+			String sql = "INSERT IGNORE INTO coding_mentor.student (first_name, last_name, email, password, salt) VALUES (?,?,?, ?, ?)";
 
 			String salt = SecureHash.getSalt();
 			String defaultPassword = Constant.DEFAULT_STUDENT_PASSWORD;
@@ -302,7 +304,7 @@ public class StudentDAO {
 			ps.setString(2, lastName);
 			ps.setString(3, email);
 			ps.setString(4, password);
-			ps.setString(4, salt);
+			ps.setString(5, salt);
 
 			int result = ps.executeUpdate();
 
@@ -368,6 +370,49 @@ public class StudentDAO {
 			}
 		}
 		return null;
+	}
+
+	public Student getStudentDetails(String studentId) throws SQLException {
+		Student student = null;
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			conn = DBUtil.makeConnection();
+			String sql = "SELECT * FROM student WHERE id = ?";
+
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, Integer.parseInt(studentId));
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				long id = rs.getLong("id");
+				String firstName = rs.getString("first_name");
+				String lastName = rs.getString("last_name");
+				String email = rs.getString("email");
+				String password = rs.getString("password");
+
+				student = new Student(id, firstName, lastName, email, password);
+				return student;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+		}
+
+		return null;
+
 	}
 
 }

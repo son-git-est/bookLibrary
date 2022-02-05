@@ -33,7 +33,7 @@ public class LoginBOServlet extends HttpServlet {
 			User user = userDAO.getUserByUsernameAndPassword(username, password);
 
 			if (user != null) {
-				request.getSession().setAttribute("user", user);
+				request.getSession().setAttribute("username", user);
 				response.sendRedirect("StudentBOServlet");
 			} else {
 				response.sendRedirect("loginBO-fail.jsp");

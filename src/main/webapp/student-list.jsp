@@ -22,7 +22,7 @@ table, th, td {
 			<th>Last Name</th>
 			<th>Email</th>
 			<th>Password</th>
-			<th colspan ="2">Action</th>
+			<th colspan="3">Action</th>
 
 		</tr>
 
@@ -31,12 +31,41 @@ table, th, td {
 				<td>${student.firstName}</td>
 				<td>${student.lastName}</td>
 				<td>${student.email}</td>
-				<td>${student.password}</td>
-				<td><a href="#">Update</a></td>
-				<td><a href="#">Delete</a></td>
+				<td><a
+					href="StudentBOServlet?action=restore&studentId=${student.id}">Restore
+						Password</a></td>
+				<td><a
+					href="StudentBOServlet?action=update&studentId=${student.id}">Update
+						Details</a></td>
+				<td><a
+					href="StudentBOServlet?action=delete&studentId=${student.id }">Delete</a></td>
 			</tr>
 		</c:forEach>
 	</table>
+	<hr>
+	<form action="StudentBOServlet" method="post">
+		<label>First Name</label><br /> <input type="text" name="firstName"><br />
+		<label>Last Name</label><br /> <input type="text" name="lastName"><br />
+		<label>Email Address</label><br /> <input type="text" name="email"><br />
+		<input type="submit" value="add student">
+
+	</form>
+	<hr>
+	<c:if test="${student != null }">
+		<form action="StudentBOUpdateServlet" method="post">
+			<input type="text" name="studentId" value="${student.id }"
+				hidden="true"><br /> <label>First Name</label><br /> <input
+				type="text" name="firstName" value="${student.firstName }"><br />
+			<label>Last Name</label><br /> <input type="text" name="lastName"
+				value="${student.lastName }"><br /> <label>Student
+				Email</label><br /> <input type="text" name="email"
+				value="${student.email }"><br /> <input type="submit"
+				value="update details">
+
+		</form>
+
+
+	</c:if>
 
 
 </body>
