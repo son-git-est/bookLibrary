@@ -202,7 +202,7 @@ public class BookDAO {
 				bookDetails.setCategoryId(rs.getInt("category_id"));
 				bookDetails.setDescription(rs.getString("description"));
 				bookDetails.setStock(rs.getInt("stock"));
-
+				bookDetails.setCategory(rs.getString("category"));
 			}
 			return bookDetails;
 		} catch (Exception e) {
@@ -225,6 +225,70 @@ public class BookDAO {
 			rs.close();
 		}
 
+	}
+
+	public void deleteBook(int bookId) throws SQLException {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+
+			conn = DBUtil.makeConnection();
+
+			String sql = "DELETE FROM book WHERE book.id = ?";
+
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, bookId);
+			int result = ps.executeUpdate();
+			if (result == 1) {
+				System.out.println("book is deleted");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("book is NOT deleted");
+		} finally {
+			close(conn, ps, rs);
+		}
+	}
+
+	public Book updateBook(int bookId) throws SQLException {
+
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		Book bookDetails = null;
+
+		try {
+
+			conn = DBUtil.makeConnection();
+
+			String sql = "SELECT * FROM book WHERE book.id = ?";
+
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, bookId);
+			rs = ps.executeQuery();
+
+			if (rs.next()) { // rs.next is boolean 1/0
+
+				bookDetails = new Book();
+
+				bookDetails.setId(rs.getInt("id"));
+				bookDetails.setName(rs.getString("name"));
+				bookDetails.setCategoryId(rs.getInt("category_id"));
+				bookDetails.setDescription(rs.getString("description"));
+				bookDetails.setStock(rs.getInt("stock"));
+				bookDetails.setCategory(rs.getString("category"));
+
+			}
+			return bookDetails;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			close(conn, ps, rs);
+		}
+		return null;
 	}
 
 }

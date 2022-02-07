@@ -16,6 +16,11 @@ table, th, td {
 
 </head>
 <body>
+
+<a href="BookBOServlet">Manage Books</a>
+
+<hr>
+<hr>
 	<table>
 		<tr>
 			<th>First Name</th>
