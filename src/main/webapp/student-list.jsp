@@ -17,7 +17,7 @@ table, th, td {
 </head>
 <body>
 
-<a href="BookBOServlet">Manage Books</a>
+<span>&leftarrow; </span><a href="BookBOServlet">Manage Books</a>
 
 <hr>
 <hr>

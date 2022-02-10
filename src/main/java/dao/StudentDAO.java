@@ -123,6 +123,9 @@ public class StudentDAO {
 				String salt = rs.getString("salt");
 				String defaultPassword = Constant.DEFAULT_STUDENT_PASSWORD;
 				String password = SecureHash.getPBKDF2Password(defaultPassword, salt);
+				
+				System.out.println(defaultPassword);
+				
 
 				sql = "UPDATE student SET password = ? where id = ?";
 				pstm = conn.prepareStatement(sql);
@@ -204,7 +207,7 @@ public class StudentDAO {
 				String storedPassword = rs.getString("password");
 				String salt = rs.getString("salt");
 
-				boolean validation = SecureHash.validateSHA265Password(password, storedPassword, salt);
+				boolean validation = SecureHash.validatePBKDF2Password(password, storedPassword, salt);
 
 				if (validation) {
 					student = new Student(id, firstName, lastName, email, storedPassword);

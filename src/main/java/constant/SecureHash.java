@@ -53,7 +53,7 @@ public class SecureHash {
 		return iterations + ":" + toHex(salt) + ":" + toHex(hash);
 	}
 
-	public boolean validatePBKDF2Password(String password, String storedPassword, String saltString)
+	public static boolean validatePBKDF2Password(String password, String storedPassword, String saltString)
 			throws NoSuchAlgorithmException, InvalidKeySpecException {
 
 		String hashPassword = getPBKDF2Password(password, saltString);

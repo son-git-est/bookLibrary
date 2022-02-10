@@ -26,8 +26,8 @@
 				<form action="LoginServlet" method="post">
 					<div class="form_settings">
 						<p>
-							<span>User Name</span><input class="contact" type="text"
-								name="username" value="" required />
+							<span>Email</span><input class="contact" type="text"
+								name="email" value="" required />
 						</p>
 						<p>
 							<span>Password</span><input class="contact" type="password"

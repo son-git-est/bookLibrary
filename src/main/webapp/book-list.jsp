@@ -14,7 +14,7 @@
 </style>
 </head>
 <body>
-<a href="StudentBOServlet">Manage Students</a>
+<span>&leftarrow; </span><a href="StudentBOServlet">Manage Students</a>
 
 	<div id="header" style="display: flex; padding: 20px;"></div>
 	<hr>
