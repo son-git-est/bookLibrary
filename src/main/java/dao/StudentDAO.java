@@ -123,9 +123,8 @@ public class StudentDAO {
 				String salt = rs.getString("salt");
 				String defaultPassword = Constant.DEFAULT_STUDENT_PASSWORD;
 				String password = SecureHash.getPBKDF2Password(defaultPassword, salt);
-				
+
 				System.out.println(defaultPassword);
-				
 
 				sql = "UPDATE student SET password = ? where id = ?";
 				pstm = conn.prepareStatement(sql);
@@ -416,6 +415,48 @@ public class StudentDAO {
 
 		return null;
 
+	}
+
+	public Student getStudentByEmail(String studentEmail) throws SQLException {
+		Student student = null;
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			conn = DBUtil.makeConnection();
+			String sql = "SELECT * FROM student WHERE email = ?";
+
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, studentEmail);
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				long id = rs.getLong("id");
+				String firstName = rs.getString("first_name");
+				String lastName = rs.getString("last_name");
+				String email = rs.getString("email");
+				String password = rs.getString("password");
+
+				student = new Student(id, firstName, lastName, email, password);
+				return student;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+		}
+
+		return null;
 	}
 
 }

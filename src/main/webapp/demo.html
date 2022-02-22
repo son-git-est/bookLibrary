@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Javascript Demo</title>
+
+<script src="script/javascript.js"></script>
+<script>
+	function includeHTML() {
+		var z, i, elmnt, file, xhttp;
+		/* Loop through a collection of all HTML elements: */
+		z = document.getElementsByTagName("*");
+		for (i = 0; i < z.length; i++) {
+			elmnt = z[i];
+			/*search for elements with a certain atrribute:*/
+			file = elmnt.getAttribute("include-html");
+			if (file) {
+				/* Make an HTTP request using the attribute value as the file name: */
+				xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+					if (this.readyState == 4) {
+						if (this.status == 200) {
+							elmnt.innerHTML = this.responseText;
+						}
+						if (this.status == 404) {
+							elmnt.innerHTML = "Page not found.";
+						}
+						/* Remove the attribute, and call this function once more: */
+						elmnt.removeAttribute("include-html");
+						includeHTML();
+					}
+				}
+				xhttp.open("GET", file, true);
+				xhttp.send();
+				/* Exit the function: */
+				return;
+			}
+		}
+	}
+</script>
+</head>
+
+<body>
+	
+
+	<button id="get_all_students_button" onclick="getAllStudents()">Get
+		All Students</button>
+		
+	<button id="get_all_students_button" onclick="fetchAllStudents()">Get
+		Fetch All Students</button>
+
+
+
+	<label>Student Email</label>
+	<input type="text" id="studentEmail">
+	<button onclick="getStudentByEmail()">Get Student</button>
+
+	<div id="site_content">
+
+		<table id="get_all_students_table">
+			<tr>
+				<th>First Name</th>
+				<th>Last Name</th>
+				<th>Email</th>
+			<tr>
+		</table>
+	</div>
+
+	<script>
+		includeHTML();
+	</script>
+
+</body>
+
+</html>

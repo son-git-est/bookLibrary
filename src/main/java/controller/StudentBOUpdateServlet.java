@@ -54,6 +54,8 @@ public class StudentBOUpdateServlet extends HttpServlet {
 			boolean rs = studentDAO.updateStudentDetailsById(id, firstName, lastName, email);
 
 			if (rs == true) {
+				request.getSession().setAttribute("student", null);
+				//response.sendRedirect("student-list.jsp");
 				response.sendRedirect("StudentBOServlet");
 			}
 
